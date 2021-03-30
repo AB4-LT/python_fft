@@ -14,6 +14,7 @@ import inspect
 import csv
 import pylab# модуль построения поверхности
 from mpl_toolkits.mplot3d import Axes3D# модуль построения поверхности
+from scipy.signal import butter, lfilter, freqz
 
 FD = 3200
 G_SCALE_FACTOR = 0.004
@@ -30,6 +31,17 @@ py_velocity = .0
 
 velosity_histoty =[]
 
+def butter_lowpass(cutoff, fs, order=5):
+    nyq = 0.5 * fs
+    normal_cutoff = cutoff / nyq
+    b, a = butter(order, normal_cutoff, btype='low', analog=False)
+    return b, a
+
+def butter_lowpass_filter(data, cutoff, fs, order=5):
+    b, a = butter_lowpass(cutoff, fs, order=order)
+    y = lfilter(b, a, data)
+    return y
+    
 def toFixed(numObj, digits=0):
     return f"{numObj:.{digits}f}"
     
@@ -67,7 +79,7 @@ def get_descr_textfile(textfile_name):
     return data[0]
 
 def plot_signal_fft_and_history(adxl_signal, freqs, history, velocity, python_freqs, python_fft, label_name):
-    START_POS = 1
+    START_POS = 5
     plt.subplot(311)
     plt.plot(adxl_signal)
     plt.subplot(312)
@@ -134,12 +146,26 @@ for row in reader:
        #input_points.append([float(k.replace(',','.')), 0.0])
    
    
-print(input_points)
+#print(input_points)
 save_in_point_to_c_file(input_points)
 
 
 n=[input_points[i][0] for i in range(len(input_points))]
 signal = [input_points[i][1] for i in range(len(input_points))]
+#window = np.hamming(len(signal))
+#signal = signal*window
+
+
+# Filter requirements.
+order = 6
+fs = 3200.0       # sample rate, Hz
+cutoff = 600      # desired cutoff frequency of the filter, Hz
+# Get the filter coefficients so we can check its frequency response. # b, a = butter_lowpass(cutoff, fs, order)
+
+#signal = butter_lowpass_filter(signal, cutoff, fs, order)
+
+print(signal)
+
 spectrum = rfft(signal)
 furie_amplitudes = np_abs(spectrum)
 furie_norm_amplitudes = 2 * G_SCALE_FACTOR * furie_amplitudes / len(signal)
