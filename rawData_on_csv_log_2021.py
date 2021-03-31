@@ -21,7 +21,7 @@ G_SCALE_FACTOR = 0.004
 G_MM_S2 = 9.80665
 MM_IN_METER = 1000
 USE_POINTS = 4096
-START_POINT_INDEX = 3000
+START_POINT_INDEX = 0
 
 DEAD_ZONE =2*G_SCALE_FACTOR
 CALC_START_POS = 13
@@ -95,7 +95,7 @@ def plot_signal_fft_and_history(adxl_signal, freqs, history, velocity, python_fr
 def calc_python_velocity(freq_array, fft_array):
     global py_velocity
     global velosity_histoty
-    print('python velocity')
+    #print('python velocity')
     velocity = 0
     count = 0
     for i in range(CALC_START_POS, len(freq_array)):
@@ -104,7 +104,7 @@ def calc_python_velocity(freq_array, fft_array):
         if fft_array[i] > DEAD_ZONE:
             velocity += pow(fft_array[i] / freq_array[i], 2)
             count += 1
-            print(i, freq_array[i], fft_array[i], velocity, sep='   ')
+            print("[", i, "] ", toFixed(freq_array[i],2), " Hz   ", toFixed(fft_array[i],5), " g   ", toFixed(pow(velocity * pow( G_MM_S2 * MM_IN_METER, 2) / (4 * pow(pi, 2)), 0.5) / pow(2, 0.5),3), " mm/s", sep='')
         velosity_histoty[i] =  velocity
 
     velocity = pow(velocity * pow( G_MM_S2 * MM_IN_METER, 2) / (4 * pow(pi, 2)), 0.5) / pow(2, 0.5)
@@ -112,7 +112,7 @@ def calc_python_velocity(freq_array, fft_array):
     for i in range(CALC_START_POS, len(freq_array)):
         velosity_histoty[i] = pow(velosity_histoty[i]* pow( G_MM_S2 * MM_IN_METER, 2) / (4 * pow(pi, 2)), 0.5) / pow(2, 0.5)
 
-    print('velocity_xyz_points', count,sep='   ')
+    #print('velocity_xyz_points', count,sep='   ')
     print('velocity', velocity, sep='   ')
 
     py_velocity = velocity
@@ -129,8 +129,46 @@ def save_in_point_to_c_file(input_points):
 
 
 
-input_file = "AB4-LT F88A5EA2A9E5_0.51.csv"
-tune_coeff = 10000
+
+input_file = "AB4-LT F88A5EA2ABA5_0.28.csv"
+tune_coeff = 10300
+FD = 3200
+
+input_file = "AB4-LT F88A5EA2ABA5_1600_0.34.csv"
+tune_coeff = 10300
+FD = 1600
+
+
+
+input_file = "AB4-LT F88A5EA2A9E5_0.15.csv"
+tune_coeff = 9970
+FD = 3200
+
+input_file = "AB4-LT F88A5EA2A9E5_1600_0.13.csv"
+tune_coeff = 9970
+FD = 1600
+
+
+
+input_file = "AB4-LT F88A5EA2A9E5_0.84.csv"
+tune_coeff = 9970
+FD = 3200
+
+input_file = "AB4-LT F88A5EA2A9E5_1600_0.9.csv"
+tune_coeff = 9970
+FD = 1600
+
+
+
+input_file = "AB4-LT F88A5EA2ABA5_0.36.csv"
+tune_coeff = 10300
+FD = 3200
+
+input_file = "AB4-LT F88A5EA2ABA5_1600_0.34 (1).csv"
+tune_coeff = 10300
+FD = 1600
+
+
 
 file_descr = input_file
 
@@ -164,7 +202,7 @@ cutoff = 600      # desired cutoff frequency of the filter, Hz
 
 #signal = butter_lowpass_filter(signal, cutoff, fs, order)
 
-print(signal)
+#print(signal)
 
 spectrum = rfft(signal)
 furie_amplitudes = np_abs(spectrum)
@@ -183,11 +221,11 @@ for i in range(len(furie_freqs)) :
 
 calc_python_velocity(furie_freqs, furie_norm_amplitudes)
 
-fig = plt.figure()
-ax = fig.gca(projection='3d')
-ax.plot(n,signal,0,label='accel z')
-ax.legend(loc='best')
-ax.grid(True)
+#fig = plt.figure()
+#ax = fig.gca(projection='3d')
+#ax.plot(n,signal,0,label='accel z')
+#ax.legend(loc='best')
+#ax.grid(True)
 #plt.show()
 
 py_velocity = toFixed(py_velocity,3)
@@ -199,3 +237,48 @@ for i in range(len(furie_freqs)):
         deadzone_graph.append(float(DEAD_ZONE))
 
 plot_signal_fft_and_history(signal, furie_freqs, velosity_histoty, py_velocity, furie_freqs, furie_norm_amplitudes,  str(len(signal)) + " points from " + str(START_POINT_INDEX) + "  in  " + file_descr )
+
+
+sys.exit()
+
+
+
+WINDOW_LEN = 4096
+windowed_graph = []
+ADDED_LABEL = ""
+for window_shift in range(len(input_points) - WINDOW_LEN) :
+    print('window_shift', window_shift, sep='   ')
+    window_points = []
+    for i in range(WINDOW_LEN):
+        window_points.append(float(input_points[i+window_shift][1]))
+
+    #hann_window = np.hamming(len(window_points))
+    #window_points = window_points*hann_window
+    #ADDED_LABEL = "+ HANN"
+
+    order = 6
+    fs = 3200.0       # sample rate, Hz
+    cutoff = 600      # desired cutoff frequency of the filter, Hz
+    window_points = butter_lowpass_filter(window_points, cutoff, fs, order)
+    ADDED_LABEL = "+ LOWPASS FILTER"
+        
+    spectrum = rfft(window_points)
+    furie_amplitudes = np_abs(spectrum)
+    furie_norm_amplitudes = 2 * G_SCALE_FACTOR * furie_amplitudes / len(window_points)
+    furie_norm_amplitudes[0] /= 2
+    
+    furie_freqs = []
+    for i in range(len(furie_norm_amplitudes)) :
+        furie_freqs.append( i*(((FD*10000)/tune_coeff)/2)/((len(furie_norm_amplitudes)) - 1) )
+        
+    velosity_histoty = []
+    for i in range(len(window_points)) :
+        velosity_histoty.append(0)
+
+    calc_python_velocity(furie_freqs, furie_norm_amplitudes)
+    
+    windowed_graph.append(float(py_velocity))
+
+plt.plot(range(len(input_points) - WINDOW_LEN), windowed_graph, label= input_file + "   window[" + str(WINDOW_LEN) + "]" + ADDED_LABEL)
+plt.legend(loc='best')
+plt.show()
