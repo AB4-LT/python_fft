@@ -20,7 +20,7 @@ FD = 3200
 G_SCALE_FACTOR = 0.004
 G_MM_S2 = 9.80665
 MM_IN_METER = 1000
-USE_POINTS = 4096
+USE_POINTS = 2*4096
 START_POINT_INDEX = 0
 
 DEAD_ZONE =2*G_SCALE_FACTOR
@@ -129,44 +129,82 @@ def save_in_point_to_c_file(input_points):
 
 
 
-
-input_file = "AB4-LT F88A5EA2ABA5_0.28.csv"
+# указка в сборе, с магнитным щупом, 3200 Гц, двигатель №1
+input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_0.65.csv"
+input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_0.84.csv"
 tune_coeff = 10300
 FD = 3200
 
-input_file = "AB4-LT F88A5EA2ABA5_1600_0.34.csv"
+
+# указка в сборе, с магнитным щупом, 1600 Гц, двигатель №1
+input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_1600_2.89.csv"
+input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_1600_4.54.csv"
+tune_coeff = 10300
+FD = 1600
+
+
+# указка в сборе, штатный щуп, 3200 Гц, двигатель №1
+input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_0.73.csv"
+input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_1.07.csv"
+tune_coeff = 10300
+FD = 3200
+
+# указка в сборе, штатный щуп, 1600 Гц, двигатель №1
+input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_1600_2.13.csv"
+input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_1600_1.99.csv"
+tune_coeff = 10300
+FD = 1600
+
+# выносной магнитный щуп, 3200 Гц, двигатель №1
+input_file = "2021.04.02\\AB4-LT F88A5EA2A9E5_1.13.csv"
+input_file = "2021.04.02\\AB4-LT F88A5EA2A9E5_0.6.csv"
+tune_coeff = 9970
+FD = 3200
+
+# выносной магнитный щуп, 1600 Гц, двигатель №1
+input_file = "2021.04.02\\AB4-LT F88A5EA2A9E5_1600_2.4.csv"
+input_file = "2021.04.02\\AB4-LT F88A5EA2A9E5_1600_2.4 (1).csv"
+tune_coeff = 9970
+FD = 1600
+
+
+# выносной магнитный щуп, 3200 Гц, двигатель №2
+input_file = "2021.04.02\\AB4-LT F88A5EA2A9E5_12.39.csv"
+input_file = "2021.04.02\\AB4-LT F88A5EA2A9E5_9.24.csv"
+tune_coeff = 9970
+FD = 3200
+
+# выносной магнитный щуп, 1600 Гц, двигатель №2
+input_file = "2021.04.02\\AB4-LT F88A5EA2A9E5_1600_16.09.csv"
+input_file = "2021.04.02\\AB4-LT F88A5EA2A9E5_1600_20.6.csv"
+tune_coeff = 9970
+FD = 1600
+
+
+# указка в сборе, с магнитным щупом, 3200 Гц, двигатель №2
+input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_5.28.csv"
+input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_4.19.csv"
+tune_coeff = 10300
+FD = 3200
+
+# указка в сборе, с магнитным щупом, 1600 Гц, двигатель №2
+input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_1600_9.26.csv"
+input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_1600_15.4.csv"
+input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_1600_13.59.csv"
 tune_coeff = 10300
 FD = 1600
 
 
 
-input_file = "AB4-LT F88A5EA2A9E5_0.15.csv"
-tune_coeff = 9970
-FD = 3200
-
-input_file = "AB4-LT F88A5EA2A9E5_1600_0.13.csv"
-tune_coeff = 9970
-FD = 1600
 
 
+# подставить сюда нужный файл
 
-input_file = "AB4-LT F88A5EA2A9E5_0.84.csv"
-tune_coeff = 9970
-FD = 3200
-
-input_file = "AB4-LT F88A5EA2A9E5_1600_0.9.csv"
-tune_coeff = 9970
-FD = 1600
-
-
-
-input_file = "AB4-LT F88A5EA2ABA5_0.36.csv"
-tune_coeff = 10300
-FD = 3200
-
-input_file = "AB4-LT F88A5EA2ABA5_1600_0.34 (1).csv"
+input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_1600_2.89.csv"
+input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_1600_4.54.csv"
 tune_coeff = 10300
 FD = 1600
+
 
 
 
