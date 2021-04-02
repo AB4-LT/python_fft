@@ -79,7 +79,7 @@ def get_descr_textfile(textfile_name):
     return data[0]
 
 def plot_signal_fft_and_history(adxl_signal, freqs, history, velocity, python_freqs, python_fft, label_name):
-    START_POS = 5
+    START_POS = 1
     plt.subplot(311)
     plt.plot(adxl_signal)
     plt.subplot(312)
@@ -87,6 +87,17 @@ def plot_signal_fft_and_history(adxl_signal, freqs, history, velocity, python_fr
     plt.plot(python_freqs[START_POS:], deadzone_graph[START_POS:], color='green', label=velocity + " mm/s")
     plt.legend(loc='best')
     plt.subplot(313)
+    plt.plot(freqs[START_POS:], history[START_POS:], label=velocity)
+    plt.legend(loc='best')
+    plt.show()
+
+def plot_fft_and_history(adxl_signal, freqs, history, velocity, python_freqs, python_fft, label_name):
+    START_POS = 1
+    plt.subplot(211)
+    plt.plot(python_freqs[START_POS:], python_fft[START_POS:], label=label_name)
+    plt.plot(python_freqs[START_POS:], deadzone_graph[START_POS:], color='green', label=velocity + " mm/s")
+    plt.legend(loc='best')
+    plt.subplot(212)
     plt.plot(freqs[START_POS:], history[START_POS:], label=velocity)
     plt.legend(loc='best')
     plt.show()
@@ -196,15 +207,24 @@ FD = 1600
 
 
 
+input_file = "office_1\\AB4-LT F88A5EA2A7F7_1600_0_TASKYIELD.csv"
+input_file = "office_1\\AB4-LT F88A5EA2A7F7_1600_FIFO-3.csv"
+tune_coeff = 10000
+FD = 1600
+
+input_file = "office_1\\AB4-LT F88A5EA2A7F7_0_FIFO_8.csv"
+input_file = "office_1\\AB4-LT F88A5EA2A7F7_0_FIFO_16.csv"
+input_file = "office_1\\AB4-LT F88A5EA2A7F7_0_FIFO-3.csv"
+input_file = "office_1\\AB4-LT F88A5EA2A7F7_0_TASKYIELD.csv"
+tune_coeff = 10000
+FD = 3200
 
 
 # подставить сюда нужный файл
-
-input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_1600_2.89.csv"
-input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_1600_4.54.csv"
+# или см. дальше, где "модель сигнала вместо данных из файла"
+input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_0.84.csv"
 tune_coeff = 10300
-FD = 1600
-
+FD = 3200
 
 
 
@@ -221,6 +241,23 @@ for row in reader:
    #else :
        #input_points.append([float(k.replace(',','.')), 0.0])
    
+
+#модель сигнала вместо данных из файла
+if 1 :
+    USE_POINTS = 4*2048   
+    FD = 3200
+    CALC_START_POS = int(10*USE_POINTS/FD+1)
+    input_points = []
+    input_signal_hz = 9
+    file_descr = " model " + str(input_signal_hz) +" Hz [" + str(USE_POINTS) + " points " + str(FD) + " Hz]"
+    for i in range(USE_POINTS):
+        model_signal = 1/G_SCALE_FACTOR*sin(input_signal_hz*i/FD*2*pi)
+        #model_signal += 0.5/G_SCALE_FACTOR*sin(100*i/FD*2*pi)
+        #model_signal += 0.08/G_SCALE_FACTOR*sin(77*i/FD*2*pi)
+        input_points.append([float(i), float(model_signal)])
+
+
+
    
 #print(input_points)
 save_in_point_to_c_file(input_points)
@@ -229,7 +266,8 @@ save_in_point_to_c_file(input_points)
 n=[input_points[i][0] for i in range(len(input_points))]
 signal = [input_points[i][1] for i in range(len(input_points))]
 #window = np.hamming(len(signal))
-#signal = signal*window
+window = np.hanning(len(signal))
+signal = signal*window
 
 
 # Filter requirements.
@@ -275,6 +313,7 @@ for i in range(len(furie_freqs)):
         deadzone_graph.append(float(DEAD_ZONE))
 
 plot_signal_fft_and_history(signal, furie_freqs, velosity_histoty, py_velocity, furie_freqs, furie_norm_amplitudes,  str(len(signal)) + " points from " + str(START_POINT_INDEX) + "  in  " + file_descr )
+#plot_fft_and_history(signal, furie_freqs, velosity_histoty, py_velocity, furie_freqs, furie_norm_amplitudes,  str(len(signal)) + " points from " + str(START_POINT_INDEX) + "  in  " + file_descr )
 
 
 sys.exit()
