@@ -22,7 +22,7 @@ FD = 3200
 G_SCALE_FACTOR = 0.004
 G_MM_S2 = 9.80665
 MM_IN_METER = 1000
-USE_POINTS = 2*4096
+USE_POINTS = 1*4096
 START_POINT_INDEX = 0
 
 DEAD_ZONE =2*G_SCALE_FACTOR
@@ -136,6 +136,16 @@ def plot_signal_fft_and_fftvelocity(python_freqs, adxl_signal, python_fft, fft_v
     plt.legend(loc='best')
     plt.show()
 
+def plot_signal_and_fft(python_freqs, adxl_signal, python_fft, velocity, label_name):
+    START_POS = 1
+    plt.subplot(211)
+    plt.plot(adxl_signal)
+    plt.subplot(212)
+    plt.plot(python_freqs[START_POS:], python_fft[START_POS:], label=label_name)
+    plt.plot(python_freqs[START_POS:], deadzone_graph[START_POS:], color='green', label=velocity + " mm/s,   DEAD_ZONE = " + str(toFixed(DEAD_ZONE,5)))
+    plt.legend(loc='best')
+    plt.show()
+
 
 def calc_python_velocity(freq_array, fft_array):
     global py_velocity
@@ -177,167 +187,12 @@ def save_signal_to_c_file(signal):
 
 
 
-# указка в сборе, с магнитным щупом, 3200 Гц, двигатель №1
-input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_0.65.csv"
-input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_0.84.csv"
-tune_coeff = 10300
-FD = 3200
-
-
-# указка в сборе, с магнитным щупом, 1600 Гц, двигатель №1
-input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_1600_2.89.csv"
-input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_1600_4.54.csv"
-tune_coeff = 10300
-FD = 1600
-
-
-# указка в сборе, штатный щуп, 3200 Гц, двигатель №1
-input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_0.73.csv"
-input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_1.07.csv"
-tune_coeff = 10300
-FD = 3200
-
-# указка в сборе, штатный щуп, 1600 Гц, двигатель №1
-input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_1600_2.13.csv"
-input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_1600_1.99.csv"
-tune_coeff = 10300
-FD = 1600
-
-# выносной магнитный щуп, 3200 Гц, двигатель №1
-input_file = "2021.04.02\\AB4-LT F88A5EA2A9E5_1.13.csv"
-input_file = "2021.04.02\\AB4-LT F88A5EA2A9E5_0.6.csv"
-tune_coeff = 9970
-FD = 3200
-
-# выносной магнитный щуп, 1600 Гц, двигатель №1
-input_file = "2021.04.02\\AB4-LT F88A5EA2A9E5_1600_2.4.csv"
-input_file = "2021.04.02\\AB4-LT F88A5EA2A9E5_1600_2.4 (1).csv"
-tune_coeff = 9970
-FD = 1600
-
-
-# выносной магнитный щуп, 3200 Гц, двигатель №2
-input_file = "2021.04.02\\AB4-LT F88A5EA2A9E5_12.39.csv"
-input_file = "2021.04.02\\AB4-LT F88A5EA2A9E5_9.24.csv"
-tune_coeff = 9970
-FD = 3200
-
-# выносной магнитный щуп, 1600 Гц, двигатель №2
-input_file = "2021.04.02\\AB4-LT F88A5EA2A9E5_1600_16.09.csv"
-input_file = "2021.04.02\\AB4-LT F88A5EA2A9E5_1600_20.6.csv"
-tune_coeff = 9970
-FD = 1600
-
-
-# указка в сборе, с магнитным щупом, 3200 Гц, двигатель №2
-input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_5.28.csv"
-input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_4.19.csv"
-tune_coeff = 10300
-FD = 3200
-
-# указка в сборе, с магнитным щупом, 1600 Гц, двигатель №2
-input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_1600_9.26.csv"
-input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_1600_15.4.csv"
-input_file = "2021.04.02\\AB4-LT F88A5EA2ABA5_1600_13.59.csv"
-tune_coeff = 10300
-FD = 1600
-
-
-
-input_file = "office_1\\AB4-LT F88A5EA2A7F7_1600_0_TASKYIELD.csv"
-input_file = "office_1\\AB4-LT F88A5EA2A7F7_1600_FIFO-3.csv"
-tune_coeff = 10000
-FD = 1600
-
-input_file = "office_1\\AB4-LT F88A5EA2A7F7_0_FIFO_8.csv"
-input_file = "office_1\\AB4-LT F88A5EA2A7F7_0_FIFO_16.csv"
-input_file = "office_1\\AB4-LT F88A5EA2A7F7_0_FIFO-3.csv"
-input_file = "office_1\\AB4-LT F88A5EA2A7F7_0_TASKYIELD.csv"
-tune_coeff = 10000
-FD = 3200
-
-
-
-
-input_file = "2021.04.05\\AB4-LT_7.94 _566Гц_10.csv"
-input_file = "2021.04.05\\AB4-LT F88A5EA2A577_9.91_10Гц_10.csv"
-input_file = "2021.04.05\\AB4-LT F88A5EA2A577_10.14_40Гц_10.csv"
-input_file = "2021.04.05\\AB4-LT F88A5EA2A577_0.42_8Гц_10.csv"
-input_file = "2021.04.05\\AB4-LT F88A5EA2A577_1.76_25Гц_2.csv"
-input_file = "2021.04.05\\AB4-LT F88A5EA2A577_3.87_10Гц_4.csv"
-tune_coeff = 10140 #1577
-FD = 3200
-
-
-
-input_file = "2021.04.07\\AB4-LT F88A5EA2A9E5_2.62.csv"
-input_file = "2021.04.07\\AB4-LT F88A5EA2A9E5_4.92.csv"
-input_file = "2021.04.07\\AB4-LT F88A5EA2A9E5_2.02.csv"
-tune_coeff = 9970 #A9E5
-FD = 3200
-
-input_file = "2021.04.07\\AB4-LT F88A5EA2ABA5_2.78.csv"
-input_file = "2021.04.07\\AB4-LT F88A5EA2ABA5_4.15.csv"
-input_file = "2021.04.07\\AB4-LT F88A5EA2ABA5_13.4.csv"
-tune_coeff = 10300 #BA5
-FD = 3200
-
-
-
-input_file = "2021.04.08\\AB4-LT F88A5EA2A7F7_2.41.csv"
-input_file = "2021.04.08\\AB4-LT F88A5EA2A7F7_0.44.csv"
-input_file = "2021.04.08\\AB4-LT F88A5EA2A7F7_0.csv"
-input_file = "2021.04.08\\AB4-LT F88A5EA2A7F7_7.67.csv"
-input_file = "2021.04.08\\AB4-LT F88A5EA2A7F7_0.12.csv"
-input_file = "2021.04.08\\AB4-LT F88A5EA2A7F7_0.13.csv"
-input_file = "2021.04.08\\AB4-LT F88A5EA2A7F7_1.36.csv"
-input_file = "2021.04.08\\AB4-LT F88A5EA2A7F7_1.14.csv"
-tune_coeff = 10300 #BA5
-FD = 3200
-
-
-
-#Северная ТЭЦ
-#Двигатель №1
-input_file = "2021.04.13\\AB4-LT F88A5EA2ABA5_11.57.csv"
-input_file = "2021.04.13\\AB4-LT F88A5EA2ABA5_11.56.csv"
-tune_coeff = 10300 #BA5
-FD = 3200
-
-#Двигатель №1
-input_file = "2021.04.13\\AB4-LT F88A5EA2A9E5_7.52.csv"
-input_file = "2021.04.13\\AB4-LT F88A5EA2A9E5_7.84.csv"
-tune_coeff = 9970 #A9E5
-FD = 3200
-
-#Двигатель №2
-input_file = "2021.04.13\\AB4-LT F88A5EA2A9E5_2.79.csv"
-input_file = "2021.04.13\\AB4-LT F88A5EA2A9E5_2.78.csv"
-tune_coeff = 9970 #A9E5
-FD = 3200
-
-#Двигатель №2
-input_file = "2021.04.13\\AB4-LT F88A5EA2ABA5_4.72.csv"
-input_file = "2021.04.13\\AB4-LT F88A5EA2ABA5_1.31.csv"
-input_file = "2021.04.13\\AB4-LT F88A5EA2ABA5_1.73.csv"
-tune_coeff = 10300 #BA5
-FD = 3200
-
-
-
 
 # подставить сюда нужный файл
 # или см. дальше, где "модель сигнала вместо данных из файла"
 
-
-
-
-
-#Северная ТЭЦ
-#Двигатель №1
-input_file = "2021.04.13\\AB4-LT F88A5EA2ABA5_11.57.csv"
-input_file = "2021.04.13\\AB4-LT F88A5EA2ABA5_11.56.csv"
-tune_coeff = 10300 #BA5
+input_file = "2021.04.16\\AB4-LT F88A5EA2A7F7_0.16    [0.14,   0.16,   0.11]    1287.csv"
+tune_coeff = 10000 
 FD = 3200
 
 
@@ -348,7 +203,6 @@ reader = csv.reader(open(input_file, 'r'),delimiter=';', quotechar=',')
 input_points = []
 for row in reader:
    k, v = row
-   i = float(k.replace(',','.')) 
    input_points.append([float(k.replace(',','.')), float(v.replace(',','.'))])
    
 
@@ -370,9 +224,36 @@ if 0 :
 
 
    
+x = []
+y = []
+z = [] 
+n = []
+for i in range(USE_POINTS):
+    n.append(input_points[i][0])
+    x.append(input_points[i][1])
+    y.append(input_points[i+USE_POINTS][1])
+    z.append(input_points[i+2*USE_POINTS][1])
 
-n=[input_points[i][0] for i in range(len(input_points))]
-signal = [input_points[i][1] for i in range(len(input_points))]
+middle_x = np.mean(x)    
+middle_y = np.mean(y)    
+middle_z = np.mean(z)    
+for i in range(USE_POINTS):
+    x[i] -= middle_x
+    y[i] -= middle_y
+    z[i] -= middle_z
+
+signal = []    
+vector_len = []    
+for i in range(USE_POINTS):
+    signal.append( x[i] )
+    vector_len.append( pow((pow(x[i],2) + pow(y[i],2) + pow(z[i],2)),0.5) )
+    #signal.append( y[i] *  pow((pow(x[i],2) + pow(y[i],2) + pow(z[i],2)),0.5) / (1/G_SCALE_FACTOR))
+    
+for i in range(USE_POINTS):
+    #signal[i] = signal[i] * pow( pow(signal[i], 2) / pow(vector_len[i], 2), 0.5)
+    signal[i] = vector_len[i]
+
+
 
 #window = np.hamming(len(signal))
 #window = np.hanning(len(signal))
@@ -382,8 +263,8 @@ signal = [input_points[i][1] for i in range(len(input_points))]
 # Filter requirements.
 order = 6
 fs = 3200.0       # sample rate, Hz
-lowcut = 10.0
-highcut = 1000.0
+lowcut = 800.0
+highcut = 1600.0
 # Get the filter coefficients so we can check its frequency response. # b, a = butter_lowpass(cutoff, fs, order)
 level = 2000
 if 0 :
@@ -402,39 +283,16 @@ if 0 :
 if 1 :
     signal -= np.mean(signal)
     signal = butter_bandpass_filter(signal, lowcut, highcut, fs, order)
-
+    
 
 save_signal_to_c_file(signal)
-
-#прореживание сигнала
-if 1 :
-    decimation_signal = []    
-    decimation_coefficient = 8
-    i = 0
-
-    FD /= decimation_coefficient
-    
-    lowcut = 10.0
-    highcut = FD/3
-    fs = FD
-    order = 6
-    signal -= np.mean(signal)
-    signal = butter_lowpass_filter(signal, highcut, fs, order)
-    
-    while i < len(signal):
-        decimation_signal.append(signal[i])
-        i += decimation_coefficient
-    signal = decimation_signal
-
-    signal -= np.mean(signal)
-    signal = butter_lowpass_filter(signal, highcut, fs, order)
-    
 
 
 spectrum = rfft(signal)
 furie_amplitudes = np_abs(spectrum)
 furie_norm_amplitudes = 2 * G_SCALE_FACTOR * furie_amplitudes / len(signal)
 furie_norm_amplitudes[0] /= 2
+
 
 
 #furie_freqs = rfftfreq(len(signal), 1. / FD)
@@ -454,10 +312,6 @@ print(file_descr)
 calc_python_velocity(furie_freqs, furie_norm_amplitudes)
 print("DEAD_ZONE", DEAD_ZONE, sep='   ')
 
-print("len(signal) " + str(len(signal)))
-print("len(furie_freqs) " + str(len(furie_freqs)))
-print("FD " + str(FD))
-
 
 py_velocity = toFixed(py_velocity,3)
 
@@ -469,7 +323,8 @@ for i in range(len(furie_freqs)):
 
 #plot_signal_fft_and_history(signal, furie_freqs, velocity_histoty, py_velocity, furie_freqs, furie_norm_amplitudes,  str(len(signal)) + " points from " + str(START_POINT_INDEX) + "  in  " + file_descr )
 #plot_fft_and_history(signal, furie_freqs, velocity_histoty, py_velocity, furie_freqs, furie_norm_amplitudes,  str(len(signal)) + " points from " + str(START_POINT_INDEX) + "  in  " + file_descr )
-plot_signal_fft_and_fftvelocity(furie_freqs, signal, furie_norm_amplitudes, velocity_fft, py_velocity, str(len(signal)) + " points from " + str(START_POINT_INDEX) + "  in  " + file_descr )
+#plot_signal_fft_and_fftvelocity(furie_freqs, signal, furie_norm_amplitudes, velocity_fft, py_velocity, str(len(signal)) + " points from " + str(START_POINT_INDEX) + "  in  " + file_descr )
+plot_signal_and_fft(furie_freqs, signal, furie_norm_amplitudes, py_velocity, str(len(signal)) + " points from " + str(START_POINT_INDEX) + "  in  " + file_descr )
 
 
 sys.exit()
