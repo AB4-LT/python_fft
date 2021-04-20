@@ -379,7 +379,7 @@ if 0 :
     FD = 3200
     #CALC_START_POS = int(10*USE_POINTS/FD+1)
     input_points = []
-    input_signal_hz = 600
+    input_signal_hz = 400
     file_descr = " model " + str(input_signal_hz) +" Hz [" + str(USE_POINTS) + " points " + str(FD) + " Hz]"
     for i in range(USE_POINTS):
         model_signal = 2.4464590727776745/G_SCALE_FACTOR*sin(input_signal_hz*i/FD*2*pi+pi/2)
@@ -534,10 +534,11 @@ if 1:
 #FFT по восстановленному сигналу
 if 1:
     icoeffs = []
-    for i in range(0, len(coeffs)-3):
+    for i in range(0, len(coeffs)-2):
         icoeffs.append(coeffs[i])
         
     isignal = pywt.waverec(icoeffs, 'db1') 
+    FD /= len(signal)/len(isignal)
     signal = isignal
     
     spectrum = rfft(signal)
