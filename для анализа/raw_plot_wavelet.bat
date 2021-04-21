@@ -1,0 +1,2 @@
+py rawData_on_csv_log_2021_wavelet.py
+if ERRORLEVEL 1 PAUSE
