@@ -28,6 +28,8 @@ START_POINT_INDEX = 0
 DEAD_ZONE =2*G_SCALE_FACTOR
 CALC_START_POS = 1
 deadzone_graph =[]
+lines_upper_deadzone = 0
+MINUS_DEADZONE = 0
 
 py_velocity = .0
 
@@ -129,7 +131,12 @@ def plot_signal_fft_and_fftvelocity(python_freqs, adxl_signal, python_fft, fft_v
     plt.plot(adxl_signal)
     plt.subplot(312)
     plt.plot(python_freqs[START_POS:], python_fft[START_POS:], label=label_name)
-    plt.plot(python_freqs[START_POS:], deadzone_graph[START_POS:], color='green', label=velocity + " mm/s,   DEAD_ZONE = " + str(toFixed(DEAD_ZONE,5)))
+    st = velocity + " mm/s,  "
+    if MINUS_DEADZONE != 0 :
+        st += "MINUS  "
+    st += "DEAD_ZONE = " + str(toFixed(DEAD_ZONE,5))
+    st += "     lines = " + str(lines_upper_deadzone)
+    plt.plot(python_freqs[START_POS:], deadzone_graph[START_POS:], color='green', label=st)
     plt.legend(loc='best')
     plt.subplot(313)
     plt.plot(python_freqs[START_POS:], fft_velocity[START_POS:], label=velocity)
@@ -141,11 +148,15 @@ def calc_python_velocity(freq_array, fft_array):
     global py_velocity
     global velocity_histoty
     global velocity_fft
+    global lines_upper_deadzone
     #print('python velocity')
     velocity = 0
     count = 0
     for i in range(CALC_START_POS, len(freq_array)):
         if (freq_array[i] > 9.5) & (freq_array[i] < 1000) & (fft_array[i] > DEAD_ZONE) :
+            lines_upper_deadzone += 1
+            if MINUS_DEADZONE != 0 :
+                fft_array[i] -= DEAD_ZONE
             velocity_fft[i] =  (fft_array[i] * G_MM_S2 * MM_IN_METER) / (2*pi * freq_array[i]) #перевод из амплитуды в дискретах ускорения в СКЗ виброскорости на этой частоте
             count += 1
             velocity += pow( velocity_fft[i]/pow(2, 0.5), 2)
@@ -324,21 +335,24 @@ tune_coeff = 10300 #BA5
 FD = 3200
 
 
+#СЗТЭЦ 22/04/2021
+input_file = "2021.04.22\\AB4-LT F88A5EA2A577_2.56.csv" # случайно считаны лишние точки с 8193 до 12288
+input_file = "2021.04.22\\AB4-LT F88A5EA2A577_2.11.csv" # случайно считаны лишние точки с 8193 до 12288
+tune_coeff = 10140 #1577
 
+input_file = "2021.04.22\\AB4-LT F88A5EA2A9BA_3.2.csv" # случайно считаны лишние точки с 8193 до 12288
+input_file = "2021.04.22\\AB4-LT F88A5EA2A9E5_1.93.csv" # случайно считаны лишние точки с 8193 до 12288
+input_file = "2021.04.22\\AB4-LT F88A5EA2A9E5_0.74.csv" 
+input_file = "2021.04.22\\AB4-LT F88A5EA2A9E5_1.29.csv" 
+tune_coeff = 9900 #A9BA
+
+
+input_file = "2021.04.22\\AB4-LT_1.66.csv" 
+tune_coeff = 10000 
 
 # подставить сюда нужный файл
 # или см. дальше, где "модель сигнала вместо данных из файла"
 
-
-
-
-
-#Северная ТЭЦ
-#Двигатель №1
-input_file = "2021.04.13\\AB4-LT F88A5EA2ABA5_11.57.csv"
-input_file = "2021.04.13\\AB4-LT F88A5EA2ABA5_11.56.csv"
-tune_coeff = 10300 #BA5
-FD = 3200
 
 
 
@@ -349,7 +363,8 @@ input_points = []
 for row in reader:
    k, v = row
    i = float(k.replace(',','.')) 
-   input_points.append([float(k.replace(',','.')), float(v.replace(',','.'))])
+   if i < USE_POINTS :
+       input_points.append([float(k.replace(',','.')), float(v.replace(',','.'))])
    
 
 #модель сигнала вместо данных из файла
@@ -394,41 +409,17 @@ if 0 :
         if signal[i] < -level :
             signal[i] = -level
 
-if 0 :
+if 1 :
     signal -= np.mean(signal)
     signal = butter_lowpass_filter(signal, highcut, fs, order)
     
 
-if 1 :
+if 0 :
     signal -= np.mean(signal)
     signal = butter_bandpass_filter(signal, lowcut, highcut, fs, order)
 
 
 save_signal_to_c_file(signal)
-
-#прореживание сигнала
-if 1 :
-    decimation_signal = []    
-    decimation_coefficient = 8
-    i = 0
-
-    FD /= decimation_coefficient
-    
-    lowcut = 10.0
-    highcut = FD/3
-    fs = FD
-    order = 6
-    signal -= np.mean(signal)
-    signal = butter_lowpass_filter(signal, highcut, fs, order)
-    
-    while i < len(signal):
-        decimation_signal.append(signal[i])
-        i += decimation_coefficient
-    signal = decimation_signal
-
-    signal -= np.mean(signal)
-    signal = butter_lowpass_filter(signal, highcut, fs, order)
-    
 
 
 spectrum = rfft(signal)
@@ -447,6 +438,8 @@ for i in range(len(furie_freqs)) :
     velocity_fft.append(0)
 
 #DEAD_ZONE = statistics.median(furie_norm_amplitudes[3328:3840]) # 1300..1500 Hz (4096/3200)*freq  
+lines_upper_deadzone = 0
+MINUS_DEADZONE = 0
 DEAD_ZONE = 1*G_SCALE_FACTOR
 
 print(file_descr)

@@ -188,10 +188,21 @@ def save_signal_to_c_file(signal):
 
 
 
+input_file = "2021.04.22\\AB4-LT F88A5EA2A577_-1.12    [-4.11,   -3.38,   -1.12]    1288  lines 916.csv"
+input_file = "2021.04.22\\AB4-LT F88A5EA2A9BA_2.39    [-4.28,   -4.83,   2.39]    1289  lines 373.csv"
+input_file = "2021.04.22\\AB4-LT F88A5EA2A9E5_1.66    [3.89,   4.97,   1.66]    1283  lines 952.csv"
+input_file = "2021.04.22\\AB4-LT F88A5EA2ABA5_-3.91    [-3.59,   -3.1,   -3.91]    1307  lines 1216.csv"  # датчик развёрнут на Y
+input_file = "2021.04.22\\AB4-LT F88A5EA2A577_-3.04    [-8.52,   -9.82,   -3.04]    1291  lines 1953.csv"
+input_file = "2021.04.22\\AB4-LT F88A5EA2A9BA_-3.41    [-7.14,   -11.3,   -3.41]    1291  lines 1707.csv"
+input_file = "2021.04.22\\AB4-LT F88A5EA2A9BA_-1    [-1.35,   -2.87,   -1]    1291  lines 1094.csv"
+input_file = "2021.04.22\\AB4-LT F88A5EA2A9E5_1.09    [3.3,   3.88,   1.09]    1283  lines 12.csv"
+input_file = "2021.04.22\\AB4-LT F88A5EA2A9E5_1.3    [2.16,   2.51,   1.3]    1280  lines 90.csv"  # раскачивание по Y
+input_file = "2021.04.22\\AB4-LT F88A5EA2A9BA_1.03    [-1.91,   1.61,   1.03]    1296  lines 169.csv"   # не прогрузились все точки
+
+
 # подставить сюда нужный файл
 # или см. дальше, где "модель сигнала вместо данных из файла"
-
-input_file = "2021.04.16\\AB4-LT F88A5EA2A7F7_0.16    [0.14,   0.16,   0.11]    1287.csv"
+input_file = "2021.04.22\\AB4-LT F88A5EA2A9E5_1.3    [2.16,   2.51,   1.3]    1280  lines 90.csv"  # раскачивание по Y
 tune_coeff = 10000 
 FD = 3200
 
@@ -201,9 +212,11 @@ file_descr = input_file
 
 reader = csv.reader(open(input_file, 'r'),delimiter=';', quotechar=',')
 input_points = []
+input_xyz = []
 for row in reader:
    k, v = row
    input_points.append([float(k.replace(',','.')), float(v.replace(',','.'))])
+   input_xyz.append(float(v.replace(',','.')))
    
 
 #модель сигнала вместо данных из файла
@@ -245,13 +258,13 @@ for i in range(USE_POINTS):
 signal = []    
 vector_len = []    
 for i in range(USE_POINTS):
-    signal.append( x[i] )
+    signal.append( z[i] )
     vector_len.append( pow((pow(x[i],2) + pow(y[i],2) + pow(z[i],2)),0.5) )
     #signal.append( y[i] *  pow((pow(x[i],2) + pow(y[i],2) + pow(z[i],2)),0.5) / (1/G_SCALE_FACTOR))
     
-for i in range(USE_POINTS):
+#for i in range(USE_POINTS):
     #signal[i] = signal[i] * pow( pow(signal[i], 2) / pow(vector_len[i], 2), 0.5)
-    signal[i] = vector_len[i]
+    #signal[i] = vector_len[i]
 
 
 
@@ -280,7 +293,7 @@ if 0 :
     signal = butter_lowpass_filter(signal, highcut, fs, order)
     
 
-if 1 :
+if 0 :
     signal -= np.mean(signal)
     signal = butter_bandpass_filter(signal, lowcut, highcut, fs, order)
     
@@ -324,7 +337,13 @@ for i in range(len(furie_freqs)):
 #plot_signal_fft_and_history(signal, furie_freqs, velocity_histoty, py_velocity, furie_freqs, furie_norm_amplitudes,  str(len(signal)) + " points from " + str(START_POINT_INDEX) + "  in  " + file_descr )
 #plot_fft_and_history(signal, furie_freqs, velocity_histoty, py_velocity, furie_freqs, furie_norm_amplitudes,  str(len(signal)) + " points from " + str(START_POINT_INDEX) + "  in  " + file_descr )
 #plot_signal_fft_and_fftvelocity(furie_freqs, signal, furie_norm_amplitudes, velocity_fft, py_velocity, str(len(signal)) + " points from " + str(START_POINT_INDEX) + "  in  " + file_descr )
-plot_signal_and_fft(furie_freqs, signal, furie_norm_amplitudes, py_velocity, str(len(signal)) + " points from " + str(START_POINT_INDEX) + "  in  " + file_descr )
+#plot_signal_and_fft(furie_freqs, signal, furie_norm_amplitudes, py_velocity, str(len(signal)) + " points from " + str(START_POINT_INDEX) + "  in  " + file_descr )
+
+
+st='Входной сигнал   ' + file_descr
+plt.plot(input_xyz,linewidth=2, label=st)
+plt.legend(loc='best')
+plt.show()
 
 
 sys.exit()
